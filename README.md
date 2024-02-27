@@ -6,6 +6,7 @@ Carp Text Editor is a basic text editor written in C. I most definitely don't re
 
 This features might seem basic, but hey nothing is basic for a C noob!
 
+- [ ] Makefile
 - [ ] Paint the screen.
 - [ ] How to take an input from the user.
 - [ ] Display the input on the screen.
