@@ -2,13 +2,21 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/ioctl.h>
 #include <unistd.h>
 #include <termios.h>
 #include "cli.h"
 
 #define CTRL_KEY(k) ((k) & 0x1f)
 
-struct termios orig_termios;
+struct EditorConfig
+{
+  int screen_rows;
+  int screen_cols;
+  struct termios orig_termios;
+};
+
+struct EditorConfig editorConfig;
 
 void die(const char *s)
 {
@@ -19,20 +27,40 @@ void die(const char *s)
   exit(1);
 }
 
+int getWindowSize(int *rows, int *cols)
+{
+  struct winsize ws;
+  if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0)
+  {
+    return -1;
+  }
+  else
+  {
+    *cols = ws.ws_col;
+    *rows = ws.ws_row;
+    return 0;
+  }
+}
+void initEditor()
+{
+  if (getWindowSize(&editorConfig.screen_rows, &editorConfig.screen_rows) == 1)
+    die("getWindowSize");
+}
+
 void disableRawMode()
 {
-  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == -1)
+  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &editorConfig.orig_termios) == -1)
     die("ttcsetatt");
 }
 
 void enableRawMode()
 {
-  if (tcgetattr(STDIN_FILENO, &orig_termios) == -1)
+  if (tcgetattr(STDIN_FILENO, &editorConfig.orig_termios) == -1)
     die("ttcgetatt");
 
   atexit(disableRawMode);
 
-  struct termios raw = orig_termios;
+  struct termios raw = editorConfig.orig_termios;
 
   raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
   raw.c_oflag &= ~(OPOST);
@@ -64,6 +92,8 @@ void editorProcessKeypress()
   switch (c)
   {
   case CTRL_KEY('q'):
+    write(STDERR_FILENO, "\x1b[2J", 4);
+    write(STDERR_FILENO, "\x1b[H", 3);
     exit(0);
   default:
     if (iscntrl(c))
@@ -80,9 +110,13 @@ void editorProcessKeypress()
 void editorDrawRows()
 {
   int y;
-  for (y = 0; y < 24; y++)
+  for (y = 0; y < editorConfig.screen_rows; y++)
   {
-    write(STDOUT_FILENO, "~\r\n", 3);
+    write(STDOUT_FILENO, "~", 1);
+    if (y < editorConfig.screen_rows - 1) {
+      write(STDOUT_FILENO, "\r\n", 2);
+    }
+
   }
 }
 void editorRefreshScreen()
@@ -98,6 +132,8 @@ void editorRefreshScreen()
 int main(int argc, char *argv[])
 {
   enableRawMode();
+  initEditor();
+
   char *filename = cli(argc, argv);
   printf("filename is %s\r\n", filename);
 
