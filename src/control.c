@@ -12,17 +12,17 @@
 
 
 enum EditorKey {
-  ARROW_LEFT = 'a',
-  ARROW_RIGHT = 'd',
-  ARROW_UP = 'w',
-  ARROW_DOWN = 's'
+  ARROW_LEFT = 1000,
+  ARROW_RIGHT,
+  ARROW_UP,
+  ARROW_DOWN
 };
 
 /**
  * @brief Reads and returns a key from stdin.
  * @return The key entered in the terminal (stdin).
  */
-char editorReadKey()
+int editorReadKey()
 {
   int nread;
   char c;
@@ -64,7 +64,7 @@ char editorReadKey()
   }
 }
 
-void editorMoveCursor(char key)
+void editorMoveCursor(int key)
 {
   switch (key)
   {
@@ -89,7 +89,7 @@ void editorMoveCursor(char key)
  */
 void editorProcessKeypress()
 {
-  char c = editorReadKey();
+  int c = editorReadKey();
 
   switch (c)
   {
