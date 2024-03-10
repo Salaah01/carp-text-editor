@@ -7,7 +7,7 @@
 #include <termios.h>
 #include "cli.h"
 #include "exc.h"
-#include "terminal_config.h"
+#include "config.h"
 
 #define CTRL_KEY(k) ((k) & 0x1f)
 
@@ -53,28 +53,6 @@ void editorProcessKeypress()
       printf("%d ('%c')\r\n", c, c);
     }
   }
-}
-
-void editorDrawRows()
-{
-  int y;
-  for (y = 0; y < editorConfig.screen_rows; y++)
-  {
-    write(STDOUT_FILENO, "~", 1);
-    if (y < editorConfig.screen_rows - 1)
-    {
-      write(STDOUT_FILENO, "\r\n", 2);
-    }
-  }
-}
-void editorRefreshScreen()
-{
-  write(STDOUT_FILENO, "\x1b[2J", 4);
-  write(STDOUT_FILENO, "\x1b[H", 3);
-
-  editorDrawRows();
-
-  write(STDOUT_FILENO, "\x1b[H", 3);
 }
 
 int main(int argc, char *argv[])

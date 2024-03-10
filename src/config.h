@@ -3,6 +3,9 @@
 
 #include <termios.h>
 
+/**
+ * @brief Contains information about the terminal configuration.
+ */
 struct EditorConfig
 {
   int screen_rows;
@@ -19,5 +22,9 @@ void disableRawMode();
 void enableRawMode();
 
 extern struct EditorConfig editorConfig;
+
+void editorDrawRows();
+
+void editorRefreshScreen();
 
 #endif

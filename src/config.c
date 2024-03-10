@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
-#include "terminal_config.h"
+#include "config.h"
 #include "exc.h"
 
 struct EditorConfig editorConfig;
@@ -38,13 +38,13 @@ void initEditor()
 void disableRawMode()
 {
   if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &editorConfig.orig_termios) == -1)
-    die("ttcsetatt");
+    die("ttcsetattr");
 }
 
 void enableRawMode()
 {
   if (tcgetattr(STDIN_FILENO, &editorConfig.orig_termios) == -1)
-    die("ttcgetatt");
+    die("ttcgetattr");
 
   atexit(disableRawMode);
 
@@ -59,4 +59,26 @@ void enableRawMode()
 
   if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1)
     die("tcsetattr");
+}
+
+void editorDrawRows()
+{
+  int y;
+  for (y = 0; y < editorConfig.screen_rows; y++)
+  {
+    write(STDOUT_FILENO, "~", 1);
+    if (y < editorConfig.screen_rows - 1)
+    {
+      write(STDOUT_FILENO, "\r\n", 2);
+    }
+  }
+}
+void editorRefreshScreen()
+{
+  write(STDOUT_FILENO, "\x1b[2J", 4);
+  write(STDOUT_FILENO, "\x1b[H", 3);
+
+  editorDrawRows();
+
+  write(STDOUT_FILENO, "\x1b[H", 3);
 }
