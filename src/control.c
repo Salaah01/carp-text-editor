@@ -6,7 +6,7 @@
 #include <string.h>
 #include <unistd.h>
 #include "exc.h"
-
+#include "dyn_str.h"
 #define CTRL_KEY(k) ((k) & 0x1f)
 
 /**
@@ -40,13 +40,10 @@ void editorProcessKeypress()
     write(STDERR_FILENO, "\x1b[H", 3);
     exit(0);
   default:
-    if (iscntrl(c))
-    {
-      // printf("%d\r\n", c);
-    }
-    else
-    {
-      printf("%d ('%c')\r\n", c, c);
-    }
+    break;
+    // else
+    // {
+    // printf("%d ('%c')\r\n", c, c);
+    // }
   }
 }
