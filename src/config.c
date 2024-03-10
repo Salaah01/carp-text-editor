@@ -27,11 +27,13 @@ int getWindowSize(int *rows, int *cols)
     *rows = ws.ws_row;
     return 0;
   }
+
+
 }
 
 void initEditor()
 {
-  if (getWindowSize(&editorConfig.screen_rows, &editorConfig.screen_rows) == 1)
+  if (getWindowSize(&editorConfig.screen_rows, &editorConfig.screen_rows) == -1)
     die("getWindowSize");
 }
 
@@ -52,8 +54,8 @@ void enableRawMode()
 
   raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
   raw.c_oflag &= ~(OPOST);
-  raw.c_lflag &= ~(ECHO | ICANON | ISIG);
-  raw.c_cflag &= ~(CS8);
+  raw.c_cflag |= (CS8);
+  raw.c_lflag &= ~(ECHO | ICANON | ISIG | IEXTEN);
   raw.c_cc[VMIN] = 0;
   raw.c_cc[VTIME] = 1;
 
@@ -84,9 +86,9 @@ void editorRefreshScreen()
 
   editorDrawRows(&abuf);
 
-  abufAppend(&abuf, "\x1b[H", 3);
-  abufAppend(&abuf, "\x1b[?25h", 6);
+  // abufAppend(&abuf, "\x1b[H", 3);
+  // abufAppend(&abuf, "\x1b[?25h", 6);
 
-  write(STDERR_FILENO, abuf.buf, abuf.len);
+  write(STDOUT_FILENO, abuf.buf, abuf.len);
   abufFree(&abuf);
 }
