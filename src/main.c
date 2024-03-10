@@ -6,73 +6,21 @@
 #include <unistd.h>
 #include <termios.h>
 #include "cli.h"
+#include "exc.h"
+#include "terminal_config.h"
 
 #define CTRL_KEY(k) ((k) & 0x1f)
 
-struct EditorConfig
+struct ABuf
 {
-  int screen_rows;
-  int screen_cols;
-  struct termios orig_termios;
+  char *buf;
+  int len;
 };
 
-struct EditorConfig editorConfig;
-
-void die(const char *s)
-{
-  write(STDOUT_FILENO, "\x1b[2J", 4);
-  write(STDOUT_FILENO, "\x1b[H", 3);
-
-  perror(s);
-  exit(1);
-}
-
-int getWindowSize(int *rows, int *cols)
-{
-  struct winsize ws;
-  if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0)
-  {
-    return -1;
+#define ABUF_INIT \
+  {               \
+    NULL, 0       \
   }
-  else
-  {
-    *cols = ws.ws_col;
-    *rows = ws.ws_row;
-    return 0;
-  }
-}
-void initEditor()
-{
-  if (getWindowSize(&editorConfig.screen_rows, &editorConfig.screen_rows) == 1)
-    die("getWindowSize");
-}
-
-void disableRawMode()
-{
-  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &editorConfig.orig_termios) == -1)
-    die("ttcsetatt");
-}
-
-void enableRawMode()
-{
-  if (tcgetattr(STDIN_FILENO, &editorConfig.orig_termios) == -1)
-    die("ttcgetatt");
-
-  atexit(disableRawMode);
-
-  struct termios raw = editorConfig.orig_termios;
-
-  raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
-  raw.c_oflag &= ~(OPOST);
-  raw.c_lflag &= ~(ECHO | ICANON | ISIG);
-  raw.c_cflag &= ~(CS8);
-  raw.c_cc[VMIN] = 0;
-  raw.c_cc[VTIME] = 1;
-
-  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1)
-    die("tcsetattr");
-}
-
 char editorReadKey()
 {
   int nread;
@@ -113,10 +61,10 @@ void editorDrawRows()
   for (y = 0; y < editorConfig.screen_rows; y++)
   {
     write(STDOUT_FILENO, "~", 1);
-    if (y < editorConfig.screen_rows - 1) {
+    if (y < editorConfig.screen_rows - 1)
+    {
       write(STDOUT_FILENO, "\r\n", 2);
     }
-
   }
 }
 void editorRefreshScreen()
