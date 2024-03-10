@@ -62,6 +62,39 @@ void enableRawMode()
     die("tcsetattr");
 }
 
+/**
+ * @brief Displays the welcome message.
+ * @param abuf String buffer
+ * @param cols Number of columns on the screen.
+ * @returns `void`
+ */
+void displayWelcomeMessage(struct ABuf *abuf, int cols)
+{
+
+  char welcome[80];
+  int welcome_len = snprintf(
+      welcome,
+      sizeof(welcome),
+      "%s -- %s",
+      PROGRAM_NAME,
+      PROGRAM_VERSION);
+
+  if (welcome_len > cols)
+    welcome_len = cols;
+
+  int padding = (cols - welcome_len) / 2;
+
+  if (padding)
+  {
+    abufAppend(abuf, "-", 1);
+    padding--;
+  }
+  while (padding--)
+    abufAppend(abuf, " ", 1);
+
+  abufAppend(abuf, welcome, welcome_len);
+}
+
 void editorDrawRows(struct ABuf *abuf)
 {
   int y;
@@ -70,29 +103,7 @@ void editorDrawRows(struct ABuf *abuf)
 
     if (y == editorConfig.screen_rows / 3)
     {
-      // Welcome message
-      char welcome[80];
-      int welcome_len = snprintf(
-          welcome,
-          sizeof(welcome),
-          "%s -- %s",
-          PROGRAM_NAME,
-          PROGRAM_VERSION);
-
-      if (welcome_len > editorConfig.screen_cols)
-        welcome_len = editorConfig.screen_cols;
-
-      int padding = (editorConfig.screen_cols - welcome_len) / 2;
-
-      if (padding)
-      {
-        abufAppend(abuf, "-", 1);
-        padding--;
-      }
-      while (padding--)
-        abufAppend(abuf, " ", 1);
-
-      abufAppend(abuf, welcome, welcome_len);
+      displayWelcomeMessage(abuf, editorConfig.screen_cols);
     }
     else
     {
