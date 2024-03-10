@@ -3,6 +3,9 @@
     "stdio.h": "c",
     "environments.h": "c",
     "unistd.h": "c",
-    "ioctl.h": "c"
+    "ioctl.h": "c",
+    "errno.h": "c",
+    "string.h": "c",
+    "control.h": "c"
   }
 }

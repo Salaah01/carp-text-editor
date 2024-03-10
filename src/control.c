@@ -3,7 +3,8 @@
 #include <unistd.h>
 #include <errno.h>
 #include <stdlib.h>
-
+#include <string.h>
+#include <unistd.h>
 #include "exc.h"
 
 #define CTRL_KEY(k) ((k) & 0x1f)
@@ -11,7 +12,7 @@
 /**
  * @brief Reads and returns a key from stdin.
  * @return The key entered in the terminal (stdin).
-*/
+ */
 char editorReadKey()
 {
   int nread;
@@ -27,7 +28,7 @@ char editorReadKey()
 /**
  * @brief Main logic on what to do when a user presses a key.
  * @return void
-*/
+ */
 void editorProcessKeypress()
 {
   char c = editorReadKey();

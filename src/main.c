@@ -4,11 +4,7 @@
 #include "config.h"
 #include "control.h"
 
-struct ABuf
-{
-  char *buf;
-  int len;
-};
+
 
 int main(int argc, char *argv[])
 {
