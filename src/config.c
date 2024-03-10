@@ -27,8 +27,6 @@ int getWindowSize(int *rows, int *cols)
     *rows = ws.ws_row;
     return 0;
   }
-
-
 }
 
 void initEditor()
@@ -86,8 +84,8 @@ void editorRefreshScreen()
 
   editorDrawRows(&abuf);
 
-  // abufAppend(&abuf, "\x1b[H", 3);
-  // abufAppend(&abuf, "\x1b[?25h", 6);
+  abufAppend(&abuf, "\x1b[H", 3);
+  abufAppend(&abuf, "\x1b[?25h", 6);
 
   write(STDOUT_FILENO, abuf.buf, abuf.len);
   abufFree(&abuf);
