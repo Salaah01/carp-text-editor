@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include "about.h"
 #include "config.h"
 #include "exc.h"
 
@@ -23,15 +24,15 @@ int getWindowSize(int *rows, int *cols)
   }
   else
   {
-    *cols = ws.ws_col;
     *rows = ws.ws_row;
+    *cols = ws.ws_col;
     return 0;
   }
 }
 
 void initEditor()
 {
-  if (getWindowSize(&editorConfig.screen_rows, &editorConfig.screen_rows) == -1)
+  if (getWindowSize(&editorConfig.screen_rows, &editorConfig.screen_cols) == -1)
     die("getWindowSize");
 }
 
@@ -61,14 +62,54 @@ void enableRawMode()
     die("tcsetattr");
 }
 
+/**
+ * @brief Displays the welcome message.
+ * @param abuf String buffer
+ * @param cols Number of columns on the screen.
+ * @returns `void`
+ */
+void displayWelcomeMessage(struct ABuf *abuf, int cols)
+{
+
+  char welcome[80];
+  int welcome_len = snprintf(
+      welcome,
+      sizeof(welcome),
+      "%s -- %s",
+      PROGRAM_NAME,
+      PROGRAM_VERSION);
+
+  if (welcome_len > cols)
+    welcome_len = cols;
+
+  int padding = (cols - welcome_len) / 2;
+
+  if (padding)
+  {
+    abufAppend(abuf, "-", 1);
+    padding--;
+  }
+  while (padding--)
+    abufAppend(abuf, " ", 1);
+
+  abufAppend(abuf, welcome, welcome_len);
+}
+
 void editorDrawRows(struct ABuf *abuf)
 {
   int y;
   for (y = 0; y < editorConfig.screen_rows; y++)
   {
-    abufAppend(abuf, "~", 1);
 
-    abufAppend(abuf, "\x1b[K", 3);  // Clears each line we draw.
+    if (y == editorConfig.screen_rows / 3)
+    {
+      displayWelcomeMessage(abuf, editorConfig.screen_cols);
+    }
+    else
+    {
+      abufAppend(abuf, "~", 1);
+    }
+    abufAppend(abuf, "\x1b[K", 3); // Clears each line we draw.
     if (y < editorConfig.screen_rows - 1)
     {
       abufAppend(abuf, "\r\n", 2);
