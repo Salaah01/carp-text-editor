@@ -10,8 +10,8 @@
 #include "dyn_str.h"
 #define CTRL_KEY(k) ((k) & 0x1f)
 
-
-enum EditorKey {
+enum EditorKey
+{
   ARROW_LEFT = 1000,
   ARROW_RIGHT,
   ARROW_UP,
@@ -69,16 +69,29 @@ void editorMoveCursor(int key)
   switch (key)
   {
   case ARROW_LEFT:
-    editorConfig.cursor_x--;
+    if (editorConfig.cursor_x != 0)
+    {
+      editorConfig.cursor_x--;
+    }
     break;
   case ARROW_RIGHT:
-    editorConfig.cursor_x++;
+    if (editorConfig.cursor_x != editorConfig.screen_cols - 1)
+    {
+      editorConfig.cursor_x++;
+    }
     break;
   case ARROW_UP:
-    editorConfig.cursor_y--;
+    if (editorConfig.cursor_y != 0)
+    {
+
+      editorConfig.cursor_y--;
+    }
     break;
   case ARROW_DOWN:
-    editorConfig.cursor_y++;
+    if (editorConfig.cursor_y != editorConfig.screen_rows - 1)
+    {
+      editorConfig.cursor_y++;
+    }
     break;
   }
 }
