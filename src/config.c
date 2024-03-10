@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include "about.h"
@@ -32,6 +33,10 @@ int getWindowSize(int *rows, int *cols)
 
 void initEditor()
 {
+
+  editorConfig.cursor_x = 0;
+  editorConfig.cursor_y = 0;
+
   if (getWindowSize(&editorConfig.screen_rows, &editorConfig.screen_cols) == -1)
     die("getWindowSize");
 }
@@ -125,7 +130,15 @@ void editorRefreshScreen()
 
   editorDrawRows(&abuf);
 
-  abufAppend(&abuf, "\x1b[H", 3);
+  char buf[32];
+  snprintf(
+      buf,
+      sizeof(buf),
+      "\x1b[%d;%dH",
+      editorConfig.cursor_y + 1,
+      editorConfig.cursor_x + 1);
+  abufAppend(&abuf, buf, strlen(buf));
+
   abufAppend(&abuf, "\x1b[?25h", 6);
 
   write(STDOUT_FILENO, abuf.buf, abuf.len);
