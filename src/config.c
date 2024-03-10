@@ -61,24 +61,29 @@ void enableRawMode()
     die("tcsetattr");
 }
 
-void editorDrawRows()
+void editorDrawRows(struct ABuf *abuf)
 {
   int y;
   for (y = 0; y < editorConfig.screen_rows; y++)
   {
-    write(STDOUT_FILENO, "~", 1);
+    abufAppend(abuf, "~", 1);
     if (y < editorConfig.screen_rows - 1)
     {
-      write(STDOUT_FILENO, "\r\n", 2);
+      abufAppend(abuf, "\r\n", 2);
     }
   }
 }
 void editorRefreshScreen()
 {
-  write(STDOUT_FILENO, "\x1b[2J", 4);
-  write(STDOUT_FILENO, "\x1b[H", 3);
+  struct ABuf abuf = ABUF_INIT;
 
-  editorDrawRows();
+  abufAppend(&abuf, "\x1b[2J", 4);
+  abufAppend(&abuf, "\x1b[H", 3);
 
-  write(STDOUT_FILENO, "\x1b[H", 3);
+  editorDrawRows(&abuf);
+
+  abufAppend(&abuf, "\x1b[H", 3);
+
+  write(STDERR_FILENO, abuf.buf, abuf.len);
+  abufFree(&abuf);
 }

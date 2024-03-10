@@ -2,7 +2,6 @@
 #include <string.h>
 #include "dyn_str.h"
 
-#define ABUF_INIT {NULL, 0};
 
 /**
  * @brief Appends a string to a string. This is done by increasing the size of

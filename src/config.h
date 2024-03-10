@@ -2,6 +2,7 @@
 #define _TERMINAL_CONFIG_H
 
 #include <termios.h>
+#include "dyn_str.h"
 
 /**
  * @brief Contains information about the terminal configuration.
@@ -23,7 +24,7 @@ void enableRawMode();
 
 extern struct EditorConfig editorConfig;
 
-void editorDrawRows();
+void editorDrawRows(struct ABuf *abuf);
 
 void editorRefreshScreen();
 
