@@ -10,6 +10,14 @@
 #include "dyn_str.h"
 #define CTRL_KEY(k) ((k) & 0x1f)
 
+
+enum EditorKey {
+  ARROW_LEFT = 'a',
+  ARROW_RIGHT = 'd',
+  ARROW_UP = 'w',
+  ARROW_DOWN = 's'
+};
+
 /**
  * @brief Reads and returns a key from stdin.
  * @return The key entered in the terminal (stdin).
@@ -38,13 +46,13 @@ char editorReadKey()
       switch (seq[1])
       {
       case 'A':
-        return 'w';
+        return ARROW_UP;
       case 'B':
-        return 's';
+        return ARROW_DOWN;
       case 'C':
-        return 'd';
+        return ARROW_RIGHT;
       case 'D':
-        return 'a';
+        return ARROW_LEFT;
       }
     }
 
@@ -60,16 +68,16 @@ void editorMoveCursor(char key)
 {
   switch (key)
   {
-  case 'a':
+  case ARROW_LEFT:
     editorConfig.cursor_x--;
     break;
-  case 'd':
+  case ARROW_RIGHT:
     editorConfig.cursor_x++;
     break;
-  case 'w':
+  case ARROW_UP:
     editorConfig.cursor_y--;
     break;
-  case 's':
+  case ARROW_DOWN:
     editorConfig.cursor_y++;
     break;
   }
@@ -91,10 +99,10 @@ void editorProcessKeypress()
     exit(0);
     break;
 
-  case 'w':
-  case 'a':
-  case 's':
-  case 'd':
+  case ARROW_UP:
+  case ARROW_LEFT:
+  case ARROW_RIGHT:
+  case ARROW_DOWN:
     editorMoveCursor(c);
     break;
   }
