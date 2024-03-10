@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include "config.h"
 #include "exc.h"
 #include "dyn_str.h"
 #define CTRL_KEY(k) ((k) & 0x1f)
@@ -22,7 +23,56 @@ char editorReadKey()
     if (nread == -1 && errno != EAGAIN)
       die("read");
   }
-  return c;
+
+  if (c == '\x1b')
+  {
+    char seq[3];
+
+    if (read(STDIN_FILENO, &seq[0], 1) != 1)
+      return '\x1b';
+    if (read(STDIN_FILENO, &seq[1], 1) != 1)
+      return '\x1b';
+
+    if (seq[0] == '[')
+    {
+      switch (seq[1])
+      {
+      case 'A':
+        return 'w';
+      case 'B':
+        return 's';
+      case 'C':
+        return 'd';
+      case 'D':
+        return 'a';
+      }
+    }
+
+    return '\x1b';
+  }
+  else
+  {
+    return c;
+  }
+}
+
+void editorMoveCursor(char key)
+{
+  switch (key)
+  {
+  case 'a':
+    editorConfig.cursor_x--;
+    break;
+  case 'd':
+    editorConfig.cursor_x++;
+    break;
+  case 'w':
+    editorConfig.cursor_y--;
+    break;
+  case 's':
+    editorConfig.cursor_y++;
+    break;
+  }
 }
 
 /**
@@ -39,11 +89,13 @@ void editorProcessKeypress()
     write(STDERR_FILENO, "\x1b[2J", 4);
     write(STDERR_FILENO, "\x1b[H", 3);
     exit(0);
-  default:
     break;
-    // else
-    // {
-    // printf("%d ('%c')\r\n", c, c);
-    // }
+
+  case 'w':
+  case 'a':
+  case 's':
+  case 'd':
+    editorMoveCursor(c);
+    break;
   }
 }
