@@ -6,17 +6,17 @@
 
 
 
-int main(int argc, char *argv[])
+int main()
 {
   enableRawMode();
   initEditor();
 
-  char *filename = cli(argc, argv);
-  printf("filename is %s\r\n", filename);
+  // char *filename = cli(argc, argv);
+  // printf("filename is %s\r\n", filename);
 
-  FILE *file_ptr;
-  file_ptr = fopen(filename, "a+");
-  fclose(file_ptr);
+  // FILE *file_ptr;
+  // file_ptr = fopen(filename, "a+");
+  // fclose(file_ptr);
 
   while (1)
   {
