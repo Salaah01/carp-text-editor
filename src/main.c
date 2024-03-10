@@ -8,52 +8,13 @@
 #include "cli.h"
 #include "exc.h"
 #include "config.h"
-
-#define CTRL_KEY(k) ((k) & 0x1f)
+#include "control.h"
 
 struct ABuf
 {
   char *buf;
   int len;
 };
-
-#define ABUF_INIT \
-  {               \
-    NULL, 0       \
-  }
-char editorReadKey()
-{
-  int nread;
-  char c;
-  while ((nread = read(STDIN_FILENO, &c, 1)) != 1)
-  {
-    if (nread == -1 && errno != EAGAIN)
-      die("read");
-  }
-  return c;
-}
-
-void editorProcessKeypress()
-{
-  char c = editorReadKey();
-
-  switch (c)
-  {
-  case CTRL_KEY('q'):
-    write(STDERR_FILENO, "\x1b[2J", 4);
-    write(STDERR_FILENO, "\x1b[H", 3);
-    exit(0);
-  default:
-    if (iscntrl(c))
-    {
-      // printf("%d\r\n", c);
-    }
-    else
-    {
-      printf("%d ('%c')\r\n", c, c);
-    }
-  }
-}
 
 int main(int argc, char *argv[])
 {
