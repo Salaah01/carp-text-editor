@@ -67,6 +67,8 @@ void editorDrawRows(struct ABuf *abuf)
   for (y = 0; y < editorConfig.screen_rows; y++)
   {
     abufAppend(abuf, "~", 1);
+
+    abufAppend(abuf, "\x1b[K", 3);  // Clears each line we draw.
     if (y < editorConfig.screen_rows - 1)
     {
       abufAppend(abuf, "\r\n", 2);
@@ -77,12 +79,13 @@ void editorRefreshScreen()
 {
   struct ABuf abuf = ABUF_INIT;
 
-  abufAppend(&abuf, "\x1b[2J", 4);
+  abufAppend(&abuf, "\x1b[?251", 6);
   abufAppend(&abuf, "\x1b[H", 3);
 
   editorDrawRows(&abuf);
 
   abufAppend(&abuf, "\x1b[H", 3);
+  abufAppend(&abuf, "\x1b[?25h", 6);
 
   write(STDERR_FILENO, abuf.buf, abuf.len);
   abufFree(&abuf);
