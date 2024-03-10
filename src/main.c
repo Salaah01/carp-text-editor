@@ -1,10 +1,4 @@
-#include <ctype.h>
-#include <errno.h>
-#include <stdlib.h>
 #include <stdio.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
-#include <termios.h>
 #include "cli.h"
 #include "exc.h"
 #include "config.h"
