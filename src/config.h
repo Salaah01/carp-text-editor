@@ -9,6 +9,8 @@
  */
 struct EditorConfig
 {
+  int cursor_x;
+  int cursor_y;
   int screen_rows;
   int screen_cols;
   struct termios orig_termios;
