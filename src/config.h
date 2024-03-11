@@ -5,6 +5,15 @@
 #include "dyn_str.h"
 
 /**
+ * @brief Struct to represent a row of text in the editor.
+ */
+typedef struct EditorRow
+{
+  int size;
+  char *chars;
+} e_row;
+
+/**
  * @brief Contains information about the terminal configuration.
  */
 struct EditorConfig
@@ -13,6 +22,8 @@ struct EditorConfig
   int cursor_y;
   int screen_rows;
   int screen_cols;
+  int num_rows;
+  e_row *row;
   struct termios orig_termios;
 };
 
