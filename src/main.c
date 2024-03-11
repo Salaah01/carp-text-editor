@@ -3,13 +3,13 @@
 #include "exc.h"
 #include "config.h"
 #include "control.h"
-
-
+#include "editor_io.h"
 
 int main()
 {
   enableRawMode();
   initEditor();
+  editorOpen();
 
   // char *filename = cli(argc, argv);
   // printf("filename is %s\r\n", filename);
