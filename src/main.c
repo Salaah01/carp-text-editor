@@ -1,5 +1,8 @@
+#define _DEFAULT_SOURCE
+#define _BSD_SOURCE
+#define _GNU_SOURCE
+
 #include <stdio.h>
-#include "cli.h"
 #include "exc.h"
 #include "config.h"
 #include "control.h"
