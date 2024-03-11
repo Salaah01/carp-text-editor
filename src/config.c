@@ -37,7 +37,8 @@ void initEditor()
   editorConfig.cursor_x = 0;
   editorConfig.cursor_y = 0;
   editorConfig.num_rows = 0;
-
+  editorConfig.row = NULL;
+  
   if (getWindowSize(&editorConfig.screen_rows, &editorConfig.screen_cols) == -1)
     die("getWindowSize");
 }
@@ -119,10 +120,10 @@ void editorDrawRows(struct ABuf *abuf)
     }
     else
     {
-      int len = editorConfig.row.size;
+      int len = editorConfig.row[y].size;
       if (len > editorConfig.screen_cols)
         len = editorConfig.screen_cols;
-      abufAppend(abuf, editorConfig.row.chars, len);
+      abufAppend(abuf, editorConfig.row[y].chars, len);
     }
 
     abufAppend(abuf, "\x1b[K", 3); // Clears each line we draw.

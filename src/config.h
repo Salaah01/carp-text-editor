@@ -23,7 +23,7 @@ struct EditorConfig
   int screen_rows;
   int screen_cols;
   int num_rows;
-  e_row row;
+  e_row *row;
   struct termios orig_termios;
 };
 
