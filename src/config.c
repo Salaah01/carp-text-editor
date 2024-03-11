@@ -108,7 +108,7 @@ void editorDrawRows(struct ABuf *abuf)
     if (y >= editorConfig.num_rows)
     {
 
-      if (y == editorConfig.screen_rows / 3)
+      if (editorConfig.num_rows == 0 && y == editorConfig.screen_rows / 3)
       {
         displayWelcomeMessage(abuf, editorConfig.screen_cols);
       }

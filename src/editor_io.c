@@ -6,6 +6,11 @@
 #include "config.h"
 #include "exc.h"
 
+/**
+ * @brief Opens a file and updates the editor config with the contents of the
+ *  file.
+ * @param filename The file to read from.
+ */
 void editorOpen(char *filename)
 {
 
@@ -17,6 +22,10 @@ void editorOpen(char *filename)
 
   size_t line_cap = 0;
   ssize_t line_len;
+
+  // `getline` reads in a line, allocates as much memory is needed to `line`
+  // and updates `line_cap` with the amount of memory that was allocated.
+  // `file_ptr` here is what we're using as the `stdin`.
   line_len = getline(&line, &line_cap, file_ptr);
   if (line_len != -1)
   {
